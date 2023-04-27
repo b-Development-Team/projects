@@ -1,13 +1,3 @@
-[IMPORT visualTime]
-
-[IMPORT rand] [# thanks pepsi!]
-
-[DEFINE TDTNTOR3 [SPLIT [GLOBAL VAR TDTNTOR3] ";"]]
-[DEFINE deathChances [SPLIT [INDEX [VAR TDTNTOR3] 0] "|"]]
-[DEFINE lowerBounds [SPLIT [INDEX [VAR TDTNTOR3] 1] "|"]]
-[DEFINE upperBounds [SPLIT [INDEX [VAR TDTNTOR3] 2] "|"]]
-[DEFINE bestTimes [SPLIT [INDEX [VAR TDTNTOR3] 3] "|"]]
-[DEFINE worldRecord [SPLIT [INDEX [VAR TDTNTOR3] 4] "|"]]
 
 [# this will get bigger with time trust me]
 [IF [COMPARE [INDEXOF [SPLIT [REPLACE [GLOBAL VAR testSpeedrunProfiles] ";" "|"] "|"] [STR [USERID]]] = -1] [GLOBAL DEFINE testSpeedrunProfiles [CONCAT [INDEX [SPLIT [GLOBAL VAR testSpeedrunProfiles] ";"] 0] "|" [USERNAME] ";" [INDEX [SPLIT [GLOBAL VAR testSpeedrunProfiles] ";"] 1] "|" [USERID] ";" [INDEX [SPLIT [GLOBAL VAR testSpeedrunProfiles] ";"] 2] "|180" [RANDOM 0 1] ";" [INDEX [SPLIT [GLOBAL VAR testSpeedrunProfiles] ";"] 3] "|" [TIME] ";" [INDEX [SPLIT [GLOBAL VAR testSpeedrunProfiles] ";"] 4] "|" "0/0/0/0/0/0/0/0/0/0/0/0/0/0/0/0/0/0"]]]
@@ -63,27 +53,6 @@ tc/bstar speedrun settings [setting] - Will toggle respective setting.
 [IF [COMPARE [INDEX [SPLIT [INDEX [VAR settings] [VAR location]] "/"] 1] =! "0"] ":white_check_mark: " ":x: "] "**TIMEZONE** - This setting will modify your timezone to the one you set. (timezone)\n"
 ]]]]
 [IF [COMPARE [ARGS 0] = "tdtntor3"] [IF [COMPARE [ARGS 1] = "run"] [CONCAT 
-
-[# Game separators "!", variable separators ";", value separators "|", list separators "/"]
-
-[func lowerBoundDeterminer [float number] [block [define ranum [randint 0 6]] [if [compare [var ranum] = 5] [block [define coinflip [randint 0 2]] [if [compare [var coinflip] = 0] [define number [math [var number] - [random [math [var number] / 24] [math [var number] / 20]]]] [define number [math [var number] - [max [array [math [var number] / 24] [abs [pareto 0 [math [var number] / 10] [math [var number] / -2] [math [var number] / 2]]]]]]]]] [if [compare [var ranum] < 3] [define number [math [var number] - [random 0 [math [var number] / 120]]]] [define number [math [var number] - [random [math [var number] / 120] [math [var number] / 24]]]]]] [if [compare [var number] <= 0] [define number 0]] [return [var number]]]]
-[func deathChanceDeterminer [array death] [pareto [var death] [math [var death] / 10] [math [var death] / 3] [if [compare [math [var death] * 2] + [var death]] >= 80] 80 [math [var death] * 2]]]
-
-[DEFINE dead 0]
-[DEFINE running_time 0]
-[DEFINE ansiNumber 0] [# 31 for low tier, 33 for medium tier, 36 for high tier]
-
-[func timeDeterminer [float indexValue] [RANDOM [FLOAT [INDEX [VAR lowerBounds] [VAR indexValue]]] [FLOAT [INDEX [VAR upperBounds] [VAR indexValue]]]]]
-[DEFINE timesList [ARRAY [timeDeterminer 0] [timeDeterminer 1] [timeDeterminer 2] [timeDeterminer 3] [timeDeterminer 4] [timeDeterminer 5] [timeDeterminer 6] [timeDeterminer 7] [timeDeterminer 8] [timeDeterminer 9]]]
-[DEFINE displayNames [ARRAY "Chapter One" "Chapter Two" "Trial One" "Chapter Three" "Trial Two" "Chapter Four" "Trial Three" "Chapter Five" "Chapter Six" "Finale"]]
-[func timeReducer [float indexValue] [IF [COMPARE [VAR dead] = 0] [IF [COMPARE [RANDOM 0 100] < [FLOAT [INDEX [VAR deathChances] [VAR indexValue]]]] [CONCAT [DEFINE dead 1] [IF [COMPARE [VAR indexValue] = 0] "Sadly, you died in " "\nSadly, you died in "] [INDEX [VAR displayNames] [VAR indexValue]] ".. time to reset the run!\n```"] [CONCAT [DEFINE running_time [MATH [VAR running_time] + [INDEX [VAR timesList] [VAR indexValue]]]] "You completed " [INDEX [VAR displayNames] [VAR indexValue]] " in " [time [INDEX [VAR timesList] [VAR indexValue]]] ". The clock is now at " [time [VAR running_time]] ".\n"]]]] 
-[func chunkMaker [ARRAY mode valueIndex multiplier] [BLOCK [DEFINE pacesum 0] [DEFINE antisum 0] [MAP [DEFINE pacesum [+ [VAR pacesum] [FLOAT [VAR map.i]]]] [SLICE [VAR lowerBounds] 0 [MATH [INT [VAR valueIndex]] + 1]]] [MAP [DEFINE antisum [+ [VAR antisum] [FLOAT [VAR map.i]]]] [SLICE [VAR upperBounds] 0 [MATH [INT [VAR valueIndex]] + 1]]] [IF [COMPARE [VAR mode] = 0] [MATH [MATH [MATH [FLOAT [INDEX [VAR upperBounds] [VAR valueIndex]]] - [FLOAT [INDEX [VAR lowerBounds] [VAR valueIndex]]]] * [VAR multiplier]] + [FLOAT [INDEX [VAR lowerBounds] [VAR valueIndex]]]] [MATH [MATH [MATH [VAR antisum] - [VAR pacesum]] * [VAR multiplier]] + [VAR pacesum]]]]]
-[func paceMaker [ARRAY mode valueIndex] [IF [COMPARE [IF [COMPARE [VAR mode] = 0] [INDEX [VAR timesList] [VAR valueIndex]] [VAR running_time]] < [chunkMaker [VAR mode] [VAR valueIndex] 0.2]] [RETURN "amazing"] [IF [COMPARE [IF [COMPARE [VAR mode] = 0] [INDEX [VAR timesList] [VAR valueIndex]] [VAR running_time]] < [chunkMaker [VAR mode] [VAR valueIndex] 0.4]] [RETURN "good"] [IF [COMPARE [IF [COMPARE [VAR mode] = 0] [INDEX [VAR timesList] [VAR valueIndex]] [VAR running_time]] < [chunkMaker [VAR mode] [VAR valueIndex] 0.6]] [RETURN "average"] [IF [COMPARE [IF [COMPARE [VAR mode] = 0] [INDEX [VAR timesList] [VAR valueIndex]] [VAR running_time]] < [chunkMaker [VAR mode] [VAR valueIndex] 0.8]] [RETURN "bad"] [IF [COMPARE [IF [COMPARE [VAR mode] = 0] [INDEX [VAR timesList] [VAR valueIndex]] [VAR running_time]] < [chunkMaker [VAR mode] [VAR valueIndex] 1]] [RETURN "terrible"]]]]]]]
-[func skipDiscovery [float indexValue] [IF [COMPARE [VAR dead] = 0] [IF [COMPARE [RANDINT 0 101] = 0] [CONCAT [DEFINE newTime [lowerBoundDeterminer [FLOAT [INDEX [VAR lowerBounds] [VAR indexValue]]]]] [DEFINE newDeath [deathChanceDeterminer [FLOAT [INDEX [VAR deathChances] [VAR indexValue]]]]] [DEFINE divisor [MATH [FLOAT [INDEX [VAR lowerBounds] [VAR indexValue]]] / [MATH [FLOAT [INDEX [VAR lowerBounds] [VAR indexValue]]] - [FLOAT [VAR newTime]]]]] [IF [COMPARE [VAR divisor] > 120] [DEFINE ansiNumber 31] [IF [COMPARE [VAR divisor] < 24] [DEFINE ansiNumber 36] [DEFINE ansiNumber 33]]] "[1;" [VAR ansiNumber] "mNew skip discovered in "[INDEX [VAR displayNames] [VAR indexValue]] "![0;" [VAR ansiNumber] "m " "It shaves [1;" [VAR ansiNumber] "m" [time [MATH [FLOAT [INDEX [VAR lowerBounds] [VAR indexValue]]] - [VAR newTime]]] "[0;" [VAR ansiNumber] "m off the run " [IF [COMPARE [FLOAT [INDEX [VAR deathChances] [VAR indexValue]]] > [VAR newDeath]] "and lowered " "but upped "] "the death chance to [1;" [VAR ansiNumber] "m" [MATH [ROUND [MATH 100 * [VAR newDeath]]] / 100] "%[0;" [VAR ansiNumber] "m.[0;0m\n" [DEFINE lowerBounds [SETINDEX [VAR lowerBounds] [VAR indexValue] [STR [VAR newTime]]] [DEFINE deathChances [SETINDEX [VAR deathChances] [VAR indexValue] [STR [VAR newDeath]]]]]]]]]
-[func splitMaker [float indexValue] [IF [COMPARE [VAR dead] = 0] [IF [COMPARE [INDEX [VAR timesList] [VAR indexValue]] < [FLOAT [INDEX [VAR bestTimes] [VAR indexValue]]]] [CONCAT "[1;32mBest " [INDEX [VAR displayNames] [VAR indexValue]] " split ever![0;32m It improved on the time by [1;32m" [time [MATH [FLOAT [INDEX [VAR bestTimes] [VAR indexValue]]] - [INDEX [VAR timesList] [VAR indexValue]]]] "[0;32m.[0;0m\n" [DEFINE bestTimes [SETINDEX [VAR bestTimes] [VAR indexValue] [STR [INDEX [VAR timesList] [VAR indexValue]]]]]]]]]
-[func upperBoundDecay [float indexValue] [IF [COMPARE [VAR dead] = 0] [DEFINE upperBounds [SETINDEX [VAR upperBounds] [VAR indexValue] [STR [MATH [MATH [MATH 99 * [FLOAT [INDEX [VAR upperBounds] [VAR indexValue]]]] + [MATH [FLOAT [INDEX [VAR lowerBounds] [VAR indexValue]]] + [MATH [MATH 1 / 2] * [FLOAT [INDEX [VAR lowerBounds] [VAR indexValue]]]]]] / 100]]]]]]
-[func deathChanceDecay [float indexValue] [IF [COMPARE [VAR dead] = 0] [BLOCK [DEFINE deathChances [SETINDEX [VAR deathChances] [VAR indexValue] [STR [STR [MATH [FLOAT [INDEX [VAR deathChances] [VAR indexValue]]] / 1.00075]]]]] [IF [COMPARE [VAR dead] = 1] [DEFINE dead 2]]]]]
-[func paceMessage [float indexValue] [IF [COMPARE [VAR dead] = 0] [CONCAT "This pace is " [paceMaker 0 [VAR indexValue]] [IF [COMPARE [VAR indexValue] = 0] ".\n" [CONCAT ", and the overall pace is now " [paceMaker 1 [VAR indexValue]] ".\n"]]]]]
 
 "**[" [IF [COMPARE [INDEX [SPLIT [INDEX [VAR settings] [VAR location]] "/"] 0] = "1"] [CONCAT "<@!" [USERID] ">"] [USERNAME]] "'s TDTNTOR 3: The Third Creation Run]**\n```ansi\n"
 [IF [COMPARE [VAR dead] = 0] [CONCAT [timeReducer 0] [paceMessage 0] [skipDiscovery 0] [splitMaker 0] [upperBoundDecay 0] [IF [COMPARE [VAR dead] =! 2] [deathChanceDecay 0]]]]
