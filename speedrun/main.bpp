@@ -47,7 +47,7 @@ tc/bstar speedrun settings [setting] - Will toggle respective setting.
 [1;33mMedium Tier Skip[0;0m
 [1;36mHigh Tier Skip[0;0m
 [1;37m================[0;0m
-[0;31m >>> [1mTech Discovery[0;31m <<< [0m
+[0;31m>>> [1mTech Discovery[0;31m <<<[0m
 ```"]]
 [IF [COMPARE [ARGS 0] = "settings"] [CONCAT 
 [IF [COMPARE [ARGS 1] = "ping"] [IF [COMPARE [INDEX [INDEX [VAR settings] [VAR location]] 0] = "0"] [CONCAT [DEFINE settings [SETINDEX [VAR settings] [VAR location] [JOIN [SETINDEX [SPLIT [INDEX [VAR settings] [VAR location]] "/"] 0 "1"] "/"]]] "Turned on the ping setting!"] [CONCAT [DEFINE settings [SETINDEX [VAR settings] [VAR location] [JOIN [SETINDEX [SPLIT [INDEX [VAR settings] [VAR location]] "/"] 0 "0"] "/"]]] "Turned off the ping setting!"]]
