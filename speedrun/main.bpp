@@ -14,8 +14,8 @@
 [DEFINE location [INDEXOF [VAR userids] [STR [USERID]]]]
 
 [IF [COMPARE [ARGS 0] = ""] [CONCAT 
-"**Speedrun v3.2.0**
-*Tech Discovery*
+"**Speedrun v3.2.1**
+*how do color????*
 
 TDTNTOR 3: The Third Creation
 1st. " [time [FLOAT [INDEX [VAR worldRecord] 0]]] " by " [INDEX [VAR worldRecord] 1] " (" [timezone [FLOAT [INDEX [VAR worldRecord] 2]] [INT [INDEX [SPLIT [INDEX [VAR settings] [VAR location]] "/"] 1]]] ")
@@ -47,7 +47,7 @@ tc/bstar speedrun settings [setting] - Will toggle respective setting.
 [1;33mMedium Tier Skip[0;0m
 [1;36mHigh Tier Skip[0;0m
 [1;37m================[0;0m
-[0;47;30mTech Discovery[0m
+[0;31m >>> [1mTech Discovery[0;31m <<< [0m
 ```"]]
 [IF [COMPARE [ARGS 0] = "settings"] [CONCAT 
 [IF [COMPARE [ARGS 1] = "ping"] [IF [COMPARE [INDEX [INDEX [VAR settings] [VAR location]] 0] = "0"] [CONCAT [DEFINE settings [SETINDEX [VAR settings] [VAR location] [JOIN [SETINDEX [SPLIT [INDEX [VAR settings] [VAR location]] "/"] 0 "1"] "/"]]] "Turned on the ping setting!"] [CONCAT [DEFINE settings [SETINDEX [VAR settings] [VAR location] [JOIN [SETINDEX [SPLIT [INDEX [VAR settings] [VAR location]] "/"] 0 "0"] "/"]]] "Turned off the ping setting!"]]
