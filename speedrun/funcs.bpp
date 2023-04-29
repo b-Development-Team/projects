@@ -1,4 +1,8 @@
 
+
+[# funcs.bpp]
+
+
 [# Game separators "!", variable separators ";", value separators "|", list separators "/"]
 
 [func lowerBoundDeterminer [float number] [block [define ranum [randint 0 6]] [if [compare [var ranum] = 5] [block [define coinflip [randint 0 2]] [if [compare [var coinflip] = 0] [define number [math [var number] - [random [math [var number] / 24] [math [var number] / 20]]]] [define number [math [var number] - [max [array [math [var number] / 24] [abs [pareto 0 [math [var number] / 10] [math [var number] / -2] [math [var number] / 2]]]]]]]]] [if [compare [var ranum] < 3] [define number [math [var number] - [random 0 [math [var number] / 120]]]] [define number [math [var number] - [random [math [var number] / 120] [math [var number] / 24]]]]]] [if [compare [var number] <= 0] [define number 0]] [return [var number]]]]
@@ -11,11 +15,52 @@
 [func timeDeterminer [float indexValue] [RANDOM [FLOAT [INDEX [VAR lowerBounds] [VAR indexValue]]] [FLOAT [INDEX [VAR upperBounds] [VAR indexValue]]]]]
 [DEFINE timesList [ARRAY [timeDeterminer 0] [timeDeterminer 1] [timeDeterminer 2] [timeDeterminer 3] [timeDeterminer 4] [timeDeterminer 5] [timeDeterminer 6] [timeDeterminer 7] [timeDeterminer 8] [timeDeterminer 9]]]
 [DEFINE displayNames [ARRAY "Chapter One" "Chapter Two" "Trial One" "Chapter Three" "Trial Two" "Chapter Four" "Trial Three" "Chapter Five" "Chapter Six" "Finale"]]
+
+
 [func timeReducer [float indexValue] [IF [COMPARE [VAR dead] = 0] [IF [COMPARE [RANDOM 0 100] < [FLOAT [INDEX [VAR deathChances] [VAR indexValue]]]] [CONCAT [DEFINE dead 1] [IF [COMPARE [VAR indexValue] = 0] "Sadly, you died in " "\nSadly, you died in "] [INDEX [VAR displayNames] [VAR indexValue]] ".. time to reset the run!\n```"] [CONCAT [DEFINE running_time [MATH [VAR running_time] + [INDEX [VAR timesList] [VAR indexValue]]]] "You completed " [INDEX [VAR displayNames] [VAR indexValue]] " in " [time [INDEX [VAR timesList] [VAR indexValue]]] ". The clock is now at " [time [VAR running_time]] ".\n"]]]] 
+
+
 [func chunkMaker [ARRAY mode valueIndex multiplier] [BLOCK [DEFINE pacesum 0] [DEFINE antisum 0] [MAP [DEFINE pacesum [+ [VAR pacesum] [FLOAT [VAR map.i]]]] [SLICE [VAR lowerBounds] 0 [MATH [INT [VAR valueIndex]] + 1]]] [MAP [DEFINE antisum [+ [VAR antisum] [FLOAT [VAR map.i]]]] [SLICE [VAR upperBounds] 0 [MATH [INT [VAR valueIndex]] + 1]]] [IF [COMPARE [VAR mode] = 0] [MATH [MATH [MATH [FLOAT [INDEX [VAR upperBounds] [VAR valueIndex]]] - [FLOAT [INDEX [VAR lowerBounds] [VAR valueIndex]]]] * [VAR multiplier]] + [FLOAT [INDEX [VAR lowerBounds] [VAR valueIndex]]]] [MATH [MATH [MATH [VAR antisum] - [VAR pacesum]] * [VAR multiplier]] + [VAR pacesum]]]]]
+
+
 [func paceMaker [ARRAY mode valueIndex] [IF [COMPARE [IF [COMPARE [VAR mode] = 0] [INDEX [VAR timesList] [VAR valueIndex]] [VAR running_time]] < [chunkMaker [VAR mode] [VAR valueIndex] 0.2]] [RETURN "amazing"] [IF [COMPARE [IF [COMPARE [VAR mode] = 0] [INDEX [VAR timesList] [VAR valueIndex]] [VAR running_time]] < [chunkMaker [VAR mode] [VAR valueIndex] 0.4]] [RETURN "good"] [IF [COMPARE [IF [COMPARE [VAR mode] = 0] [INDEX [VAR timesList] [VAR valueIndex]] [VAR running_time]] < [chunkMaker [VAR mode] [VAR valueIndex] 0.6]] [RETURN "average"] [IF [COMPARE [IF [COMPARE [VAR mode] = 0] [INDEX [VAR timesList] [VAR valueIndex]] [VAR running_time]] < [chunkMaker [VAR mode] [VAR valueIndex] 0.8]] [RETURN "bad"] [IF [COMPARE [IF [COMPARE [VAR mode] = 0] [INDEX [VAR timesList] [VAR valueIndex]] [VAR running_time]] < [chunkMaker [VAR mode] [VAR valueIndex] 1]] [RETURN "terrible"]]]]]]]
-[func skipDiscovery [float indexValue] [IF [COMPARE [VAR dead] = 0] [IF [COMPARE [RANDINT 0 101] = 0] [CONCAT [DEFINE newTime [lowerBoundDeterminer [FLOAT [INDEX [VAR lowerBounds] [VAR indexValue]]]]] [DEFINE newDeath [deathChanceDeterminer [FLOAT [INDEX [VAR deathChances] [VAR indexValue]]]]] [DEFINE divisor [MATH [FLOAT [INDEX [VAR lowerBounds] [VAR indexValue]]] / [MATH [FLOAT [INDEX [VAR lowerBounds] [VAR indexValue]]] - [FLOAT [VAR newTime]]]]] [IF [COMPARE [VAR divisor] > 120] [DEFINE ansiNumber 31] [IF [COMPARE [VAR divisor] < 24] [DEFINE ansiNumber 36] [DEFINE ansiNumber 33]]] "[1;" [VAR ansiNumber] "mNew skip discovered in "[INDEX [VAR displayNames] [VAR indexValue]] "![0;" [VAR ansiNumber] "m " "It shaves [1;" [VAR ansiNumber] "m" [time [MATH [FLOAT [INDEX [VAR lowerBounds] [VAR indexValue]]] - [VAR newTime]]] "[0;" [VAR ansiNumber] "m off the run " [IF [COMPARE [FLOAT [INDEX [VAR deathChances] [VAR indexValue]]] > [VAR newDeath]] "and lowered " "but upped "] "the death chance to [1;" [VAR ansiNumber] "m" [MATH [ROUND [MATH 100 * [VAR newDeath]]] / 100] "%[0;" [VAR ansiNumber] "m.[0;0m\n" [DEFINE lowerBounds [SETINDEX [VAR lowerBounds] [VAR indexValue] [STR [VAR newTime]]] [DEFINE deathChances [SETINDEX [VAR deathChances] [VAR indexValue] [STR [VAR newDeath]]]]]]]]]
+
+
+[func skipDiscovery [float indexValue]
+    [IF [COMPARE [VAR dead] = 0] 
+        [IF [COMPARE [RANDINT 0 101] = 0] 
+            [CONCAT [DEFINE newTime [lowerBoundDeterminer [FLOAT [INDEX [VAR lowerBounds] [VAR indexValue]]]]] [DEFINE newDeath [deathChanceDeterminer [FLOAT [INDEX [VAR deathChances] [VAR indexValue]]]]] [DEFINE divisor [MATH [FLOAT [INDEX [VAR lowerBounds] [VAR indexValue]]] / [MATH [FLOAT [INDEX [VAR lowerBounds] [VAR indexValue]]] - [FLOAT [VAR newTime]]]]] [IF [COMPARE [VAR divisor] > 120] [DEFINE ansiNumber 31] [IF [COMPARE [VAR divisor] < 24] [DEFINE ansiNumber 36] [DEFINE ansiNumber 33]]] "[1;" [VAR ansiNumber] "mNew skip discovered in "[INDEX [VAR displayNames] [VAR indexValue]] "![0;" [VAR ansiNumber] "m " "It shaves [1;" [VAR ansiNumber] "m" [time [MATH [FLOAT [INDEX [VAR lowerBounds] [VAR indexValue]]] - [VAR newTime]]] "[0;" [VAR ansiNumber] "m off the run " [IF [COMPARE [FLOAT [INDEX [VAR deathChances] [VAR indexValue]]] > [VAR newDeath]] "and lowered " "but upped "] "the death chance to [1;" [VAR ansiNumber] "m" [MATH [ROUND [MATH 100 * [VAR newDeath]]] / 100] "%[0;" [VAR ansiNumber] "m.[0;0m\n" [DEFINE lowerBounds [SETINDEX [VAR lowerBounds] [VAR indexValue] [STR [VAR newTime]]] [DEFINE deathChances [SETINDEX [VAR deathChances] [VAR indexValue] [STR [VAR newDeath]]]]]]
+        ]
+    ]
+]
+
+[func techDiscovery [float indexValue]
+    [IF [COMPARE [VAR dead] = 0] 
+        [IF [COMPARE [RANDINT 0 1001] = 0] 
+            [techDiscoveryInner a]
+        ]
+    ]
+]
+
+[func techDiscoveryInner [array "void_var"] 
+    [CONCAT
+        [DEFINE lowsum 0]
+        [MAP [DEFINE lowsum [+ [VAR lowsum] [FLOAT [VAR map.i]]]] [VAR lowerBounds]]
+        [DEFINE td_factor [RANDOM 20 60]]
+        [DEFINE td_mult_factor [- 1 [/ 1 [VAR td_factor]]]]
+        [DEFINE lowerBounds [MAP [* [VAR map.i] [VAR td_mult_factor]] [VAR lowerBounds]]] [# lower innerBounds by mult_factor]
+        [# text generation momento]
+        "[0;31m >>> [1mNew tech found! It saves " [MATH [ROUND [MATH 10000 * [/ 1 [VAR td_factor]]]] / 100] "% (" [MATH [ROUND [MATH 100 * [- [VAR lowsum] [* [VAR lowsum [VAR td_mult_factor]]]]]] / 100] "s) across the game.[0;31m <<< [0m\n\n"
+    ]
+]   
+
 [func splitMaker [float indexValue] [IF [COMPARE [VAR dead] = 0] [IF [COMPARE [INDEX [VAR timesList] [VAR indexValue]] < [FLOAT [INDEX [VAR bestTimes] [VAR indexValue]]]] [CONCAT "[1;32mBest " [INDEX [VAR displayNames] [VAR indexValue]] " split ever![0;32m It improved on the time by [1;32m" [time [MATH [FLOAT [INDEX [VAR bestTimes] [VAR indexValue]]] - [INDEX [VAR timesList] [VAR indexValue]]]] "[0;32m.[0;0m\n" [DEFINE bestTimes [SETINDEX [VAR bestTimes] [VAR indexValue] [STR [INDEX [VAR timesList] [VAR indexValue]]]]]]]]]
+
+
 [func upperBoundDecay [float indexValue] [IF [COMPARE [VAR dead] = 0] [DEFINE upperBounds [SETINDEX [VAR upperBounds] [VAR indexValue] [STR [MATH [MATH [MATH 99 * [FLOAT [INDEX [VAR upperBounds] [VAR indexValue]]]] + [MATH [FLOAT [INDEX [VAR lowerBounds] [VAR indexValue]]] + [MATH [MATH 1 / 2] * [FLOAT [INDEX [VAR lowerBounds] [VAR indexValue]]]]]] / 100]]]]]]
+
+
 [func deathChanceDecay [float indexValue] [IF [COMPARE [VAR dead] = 0] [BLOCK [DEFINE deathChances [SETINDEX [VAR deathChances] [VAR indexValue] [STR [STR [MATH [FLOAT [INDEX [VAR deathChances] [VAR indexValue]]] / 1.00075]]]]] [IF [COMPARE [VAR dead] = 1] [DEFINE dead 2]]]]]
+
+
 [func paceMessage [float indexValue] [IF [COMPARE [VAR dead] = 0] [CONCAT "This pace is " [paceMaker 0 [VAR indexValue]] [IF [COMPARE [VAR indexValue] = 0] ".\n" [CONCAT ", and the overall pace is now " [paceMaker 1 [VAR indexValue]] ".\n"]]]]]

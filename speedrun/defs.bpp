@@ -1,5 +1,8 @@
 
 
+[# defs.bpp]
+
+
 [DEFINE TDTNTOR3 [SPLIT [GLOBAL VAR TDTNTOR3] ";"]]
 [DEFINE deathChances [SPLIT [INDEX [VAR TDTNTOR3] 0] "|"]]
 [DEFINE lowerBounds [SPLIT [INDEX [VAR TDTNTOR3] 1] "|"]]
