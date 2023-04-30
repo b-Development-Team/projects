@@ -46,7 +46,7 @@
     [CONCAT
         [DEFINE lowsum 0]
         [MAP [DEFINE lowsum [+ [VAR lowsum] [FLOAT [VAR map.i]]]] [VAR lowerBounds]]
-        [DEFINE td_factor [RANDOM 20 60]]
+        [DEFINE td_factor [RANDOM 10 25]]
         [DEFINE td_mult_factor [- 1 [/ 1 [VAR td_factor]]]]
         [DEFINE lowerBounds [MAP [* [VAR map.i] [VAR td_mult_factor]] [VAR lowerBounds]]] [# lower innerBounds by mult_factor]
         [# text generation momento]
@@ -64,3 +64,10 @@
 
 
 [func paceMessage [float indexValue] [IF [COMPARE [VAR dead] = 0] [CONCAT "This pace is " [paceMaker 0 [VAR indexValue]] [IF [COMPARE [VAR indexValue] = 0] ".\n" [CONCAT ", and the overall pace is now " [paceMaker 1 [VAR indexValue]] ".\n"]]]]]
+
+[# stops code execution!! only use if stuff has gone very wrong]
+[func error [ARRAY "id" "name" "description"] [BLOCK
+  [THROW [JOIN [ARRAY "error **" [VAR id] "**: " [VAR name] "
+  
+  " [VAR description]] ""]]
+]]

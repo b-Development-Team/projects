@@ -14,8 +14,8 @@
 [DEFINE location [INDEXOF [VAR userids] [STR [USERID]]]]
 
 [IF [COMPARE [ARGS 0] = ""] [CONCAT 
-"**Speedrun v3.2.1**
-*how do color????*
+"**Speedrun v3.2**.2
+*Tech buff, error catching beta*
 
 TDTNTOR 3: The Third Creation
 1st. " [time [FLOAT [INDEX [VAR worldRecord] 0]]] " by " [INDEX [VAR worldRecord] 1] " (" [timezone [FLOAT [INDEX [VAR worldRecord] 2]] [INT [INDEX [SPLIT [INDEX [VAR settings] [VAR location]] "/"] 1]]] ")
@@ -85,6 +85,11 @@ tc/bstar speedrun settings [setting] - Will toggle respective setting.
 [IF [VAR page] "- " "+ "][JOIN [VAR lb] "
 - "] 
 "```"]]]]]
+
+
+[# error catching]
+
+[MAP [IF [COMPARE [VAR map.i] < 0] [error "save-0" "lowerBounds under 0 error" [CONCAT "lowerBounds was under 0!! should not happen - debug info:\n" [VAR map.i] "\n" [VAR lowerBounds]]]] [VAR lowerBounds]]
 
 [DEFINE names [JOIN [VAR names] "|"]]
 [DEFINE userids [JOIN [VAR userids] "|"]]
